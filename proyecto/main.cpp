@@ -70,7 +70,12 @@ int main() {
         string archivo;
         cin >> archivo;
         vector<Proceso> procesos = FileHandler::cargarProcesosDesdeArchivo(archivo);
+        if (procesos.empty()) {
+            cerr << "❌ No se pudieron cargar procesos. Verifique el archivo o su formato.\n";
+            return 1;
+        }
         compararAlgoritmos(procesos);
+
         return 0;
     }
 
@@ -85,6 +90,9 @@ int main() {
     int metodo;
     cin >> metodo;
 
+
+
+
     if (metodo == 1) {
         procesos = Interfaz::crearProcesosManualmente();
     } else if (metodo == 2) {
@@ -92,6 +100,11 @@ int main() {
         cout << "Ingrese nombre del archivo (ej: procesos_fcfs.txt): ";
         cin >> archivo;
         procesos = FileHandler::cargarProcesosDesdeArchivo(archivo);
+        if (procesos.empty()) {
+        std::cerr << "❌ No se pudieron cargar procesos. Verifique el archivo.\n";
+        return 1;
+        }
+
     } else {
         cout << "Opción inválida. Finalizando simulación.\n";
         return 1;

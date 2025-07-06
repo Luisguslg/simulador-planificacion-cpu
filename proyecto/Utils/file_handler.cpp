@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iomanip>
 
-
 using namespace std;
 
 vector<Proceso> FileHandler::cargarProcesosDesdeArchivo(const string& nombreArchivo) {
@@ -13,16 +12,28 @@ vector<Proceso> FileHandler::cargarProcesosDesdeArchivo(const string& nombreArch
 
     if (!archivo.is_open()) {
         cerr << "❌ Error: No se pudo abrir el archivo " << nombreArchivo << "\n";
-        return procesos;
+        return {};  // Devuelve vacío
     }
 
     string linea;
+    int lineaActual = 1;
+
     while (getline(archivo, linea)) {
         stringstream ss(linea);
         Proceso p;
-        ss >> p.id >> p.llegada >> p.rafaga >> p.prioridad;
+        if (!(ss >> p.id >> p.llegada >> p.rafaga >> p.prioridad)) {
+            cerr << "❌ Error: Formato inválido en la línea " << lineaActual << ".\n";
+            return {};  // Devuelve vacío
+        }
+
+        if (p.llegada < 0 || p.rafaga <= 0 || p.prioridad < 0) {
+            cerr << "❌ Error: Valores inválidos en la línea " << lineaActual << ".\n";
+            return {};
+        }
+
         p.estado = NUEVO;
         procesos.push_back(p);
+        lineaActual++;
     }
 
     archivo.close();
@@ -64,4 +75,3 @@ void FileHandler::guardarResultados(const string& nombreArchivo, const vector<Pr
     archivo.close();
     cout << "✅ Resultados guardados en " << nombreArchivo << "\n";
 }
-
